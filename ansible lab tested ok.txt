@@ -1,0 +1,204 @@
+Note:-https://www.youtube.com/watch?v=bm1J4ED-ZUo    >>>>installation process ansible
+
+https://www.youtube.com/watch?v=ehIcV0zGvEs&t=52s  >>>MAKE INVENTORY AND CONFIGURATION FILE
+
+https://www.youtube.com/watch?v=QqkIiHa7vTU
+
+Ansible machine tested and these steps are working fine on (AMAZON MACHINE LINUX)
+
+
+subscription-manager register
+
+
+
++++++++++++++++++IMPORTANT++++++++++++
+important: same path me inventory or ansible.cfg or role create honge++++++
+
+[ansible@ip-172-31-40-104 ansible]$ pwd
+/home/ansible/ansible
+[ansible@ip-172-31-40-104 ansible]$ ll
+total 12
+-rw-rw-r--. 1 ansible ansible 195 Feb 23 09:16 ansible.cfg
+-rw-rw-r--. 1 ansible ansible  20 Feb 23 08:56 inventory
+drwxrwxr-x. 2 ansible ansible   6 Feb 23 08:39 roles
+-rw-rw-r--. 1 ansible ansible 137 Feb 23 08:32 target.yml
+[ansible@ip-172-31-40-104 ansible]$
+
+++++++++++++++++++++++++++++++++++++++++++++
+
+
+[ec2-user@ip-172-31-40-104 ~]$ sudo useradd ansible
+[ec2-user@ip-172-31-40-104 ~]$ sudo passwd ansible
+Changing password for user ansible.
+New password:
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[ec2-user@ip-172-31-40-104 ~]$
+[ec2-user@ip-172-31-40-104 ~]$
+[ec2-user@ip-172-31-40-104 ~]$ sudo visudo
+[ec2-user@ip-172-31-40-104 ~]$
+[ec2-user@ip-172-31-40-104 ~]$
+[ec2-user@ip-172-31-40-104 ~]$ sudo vi /etc/ssh/sshd_config
+[ec2-user@ip-172-31-40-104 ~]$ [ec2-user@ip-172-31-40-104 ~]$
+[ec2-user@ip-172-31-40-104 ~]$
+[ec2-user@ip-172-31-40-104 ~]$
+[ec2-user@ip-172-31-40-104 ~]$ sudo service sshd restart
+Redirecting to /bin/systemctl restart sshd.service
+[ec2-user@ip-172-31-40-104 ~]$ sudo su ansible
+[ansible@ip-172-31-40-104 ec2-user]$ cd
+[ansible@ip-172-31-40-104 ~]$
+[ansible@ip-172-31-40-104 ~]$
+[ansible@ip-172-31-40-104 ~]$
+[ansible@ip-172-31-40-104 ~]$ pwd
+/home/ansible
+[ansible@ip-172-31-40-104 ~]$ sudo yum install python3 -y
+
+[ansible@ip-172-31-40-104 ~]$ python3 --version
+Python 3.9.20
+[ansible@ip-172-31-40-104 ~]$ sudo yum -y install python3-pip
+
+[ansible@ip-172-31-40-104 ~]$ pip3 install ansible --user
+
+[ansible@ip-172-31-40-104 ~]$ ansible --version
+ansible [core 2.15.3]
+  config file = None
+  configured module search path = ['/home/ansible/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3.9/site-packages/ansible
+  ansible collection location = /home/ansible/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  python version = 3.9.20 (main, Jan 25 2025, 00:00:00) [GCC 11.4.1 20230605 (Red Hat 11.4.1-2)] (/usr/bin/python3.9)
+  jinja version = 3.1.4
+  libyaml = True
+
+
+[ansible@ip-172-31-40-104 ~]$ sudo mkdir /etc/ansible
+
+[ansible@ip-172-31-40-104 ~]$ sudo vi /etc/ansible/hosts
+
+[db]
+172.31.42.92                                                                                                                                                ~             
+
+press esc :wq! save
+
+
+ANSIBLE CONFIGURATION FILE:-
+
+[ansible@ip-172-31-40-104 ansible]$ vi ansible.cfg
+
+[defaults]
+inventory = ./inventory
+role_path = ./roles
+ask_pass = false
+remote_user = ansible
+[privilege_escalation]
+become = true
+become_method = sudo
+become_user = root
+become_ask_pass = false
+
+:wq!   save                   
+
+[ansible@ip-172-31-40-104 ~]$ ansible all -m ping   >>>onces time all server connectivity check
+
+[WARNING]: Platform linux on host 172.31.42.92 is using the discovered Python interpreter at /usr/bin/python3.9, but future installation of another Python
+interpreter could change the meaning of that path. See https://docs.ansible.com/ansible-core/2.15/reference_appendices/interpreter_discovery.html for more
+information.
+172.31.42.92 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.9"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+[root@TestMachine ansible]# ansible all -i /root/ansible/hosts -m ping -u root
+[root@TestMachine ansible]# ansible all -i /root/ansible/hosts -m ping
+[root@TestMachine ansible]# ansible db -i /root/ansible/hosts -m ping
+[ansible@ip-172-31-40-104 ~]$ ansible db -m ping    >>>single (db)server check
+
+[WARNING]: Platform linux on host 172.31.42.92 is using the discovered Python interpreter at /usr/bin/python3.9, but future installation of another Python
+interpreter could change the meaning of that path. See https://docs.ansible.com/ansible-core/2.15/reference_appendices/interpreter_discovery.html for more
+information.
+172.31.42.92 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.9"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+[ansible@ip-172-31-40-104 ~]$ ansible all -m shell -a date
+
+[WARNING]: Platform linux on host 172.31.42.92 is using the discovered Python interpreter at /usr/bin/python3.9, but future installation of another Python
+interpreter could change the meaning of that path. See https://docs.ansible.com/ansible-core/2.15/reference_appendices/interpreter_discovery.html for more
+information.
+172.31.42.92 | CHANGED | rc=0 >>
+Sun Feb 23 06:44:14 UTC 2025
+
+[ansible@ip-172-31-40-104 ~]$ ansible all -m shell -a uptime    >>>>check system time
+
+[WARNING]: Platform linux on host 172.31.42.92 is using the discovered Python interpreter at /usr/bin/python3.9, but future installation of another Python
+interpreter could change the meaning of that path. See https://docs.ansible.com/ansible-core/2.15/reference_appendices/interpreter_discovery.html for more
+information.
+172.31.42.92 | CHANGED | rc=0 >>
+ 06:47:23 up  1:08,  4 users,  load average: 0.16, 0.03, 0.01
+[ansible@ip-172-31-40-104 ~]$
+
+
+[ansible@ip-172-31-40-104 ansible]$vi target.yml
+---
+- hosts: db
+  become: yes
+  become_method: sudo
+  become_user: root
+  tasks:
+    - name: Gather facts
+      ansible.builtin.setup:
+
+
+
+
+playbook-2
+
+[ansible@ip-172-31-40-104 ansible]$ vi task.yml               >>>>httpd install via playbook
+---
+# My first playbook
+- hosts: db
+  user: ansible
+  become: yes
+  connection: ssh
+  tasks:
+    - name: Install HTTPD
+      yum:
+        name: httpd
+        state: installed
+ 
+
+
+[ansible@ip-172-31-40-104 ansible]$ ansible-playbook task.yml
+
+PLAY [db] **************************************************************************************************************************************************
+
+TASK [Gathering Facts] *************************************************************************************************************************************
+[WARNING]: Platform linux on host 172.31.42.92 is using the discovered Python interpreter at /usr/bin/python3.9, but future installation of another Python
+interpreter could change the meaning of that path. See https://docs.ansible.com/ansible-core/2.15/reference_appendices/interpreter_discovery.html for more
+information.
+ok: [172.31.42.92]
+
+TASK [Install HTTPD] ***************************************************************************************************************************************
+changed: [172.31.42.92]
+
+PLAY RECAP *************************************************************************************************************************************************
+172.31.42.92               : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+[ansible@ip-172-31-40-104 ansible]$
+
+[ansible@ip-172-31-40-104 ansible]$ ansible db -a "which httpd"
+[WARNING]: Platform linux on host 172.31.42.92 is using the discovered Python interpreter at /usr/bin/python3.9, but future installation of another Python
+interpreter could change the meaning of that path. See https://docs.ansible.com/ansible-core/2.15/reference_appendices/interpreter_discovery.html for more
+information.
+172.31.42.92 | CHANGED | rc=0 >>
+/usr/sbin/httpd
+
+[ansible@ip-172-31-40-104 ansible]$ ansible db -a "yum remove httpd -y"                                                                                                                                                         
